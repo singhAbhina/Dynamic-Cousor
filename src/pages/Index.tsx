@@ -44,7 +44,7 @@ export default function Index() {
 
     try {
       // Connect to the backend API
-      const response = await fetch("http://localhost:5000/api/generate", {
+      const response = await fetch("https://your-backend-url.com/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
