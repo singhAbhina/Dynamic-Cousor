@@ -21,16 +21,18 @@ import {
   Send,
   Code,
   Layout,
-  PanelTop
+  PanelTop,
+  Clock
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface WebsiteFormProps {
   onSubmit: (idea: string, type: string | null) => void;
   defaultValue?: string;
+  onHistoryClick?: () => void;
 }
 
-export default function WebsiteForm({ onSubmit, defaultValue = '' }: WebsiteFormProps) {
+export default function WebsiteForm({ onSubmit, defaultValue = '', onHistoryClick }: WebsiteFormProps) {
   const [idea, setIdea] = useState(defaultValue);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
@@ -161,7 +163,7 @@ export default function WebsiteForm({ onSubmit, defaultValue = '' }: WebsiteForm
             </div>
           </div>
         </CardContent>
-        <CardFooter className="pt-2">
+        <CardFooter className="pt-2 flex flex-col gap-3">
           <Button
             type="submit"
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
@@ -169,6 +171,18 @@ export default function WebsiteForm({ onSubmit, defaultValue = '' }: WebsiteForm
           >
             <Send className="mr-2 h-4 w-4" /> Generate Website
           </Button>
+          
+          {onHistoryClick && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onHistoryClick}
+              className="w-full bg-slate-800/60 border-slate-700 text-blue-400 hover:text-white hover:bg-blue-900/30 py-4 flex items-center justify-center"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              <span>Show History</span>
+            </Button>
+          )}
         </CardFooter>
       </form>
     </Card>

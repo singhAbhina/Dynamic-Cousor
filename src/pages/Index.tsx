@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,11 +16,15 @@ import WebsiteForm from "@/components/WebsiteForm";
 import CodeDisplay from "@/components/CodeDisplay";
 import WebsitePreview from "@/components/WebsitePreview";
 import LoadingDisplay from "@/components/LoadingDisplay";
+import HistoryModal from "@/components/HistoryModal";
+import { Clock } from "lucide-react";
+import { saveToHistory, WebsiteHistoryItem } from "@/utils/history-utils";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(false);
   const [websiteIdea, setWebsiteIdea] = useState("");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const [generatedCode, setGeneratedCode] = useState({
     html: "",
@@ -59,11 +63,16 @@ export default function Index() {
       const data = await response.json();
 
       // Assume the backend returns HTML, CSS, and JS code
-      setGeneratedCode({
+      const newCode = {
         html: data.html || "",
         css: data.css || "",
         js: data.js || "",
-      });
+      };
+      
+      setGeneratedCode(newCode);
+      
+      // Save to history in localStorage
+      saveToHistory(idea, newCode.html, newCode.css, newCode.js);
 
       toast({
         title: "Success!",
@@ -77,11 +86,16 @@ export default function Index() {
       });
 
       // For demo purposes, generate sample code if API fails
-      setGeneratedCode({
+      const fallbackCode = {
         html: '<div class="container">\n  <h1>Hello World</h1>\n  <p>This is a sample website</p>\n  <button id="btn">Click me</button>\n</div>',
         css: "body {\n  font-family: Arial, sans-serif;\n  margin: 0;\n  padding: 20px;\n  background-color: #f5f5f5;\n}\n\n.container {\n  max-width: 800px;\n  margin: 0 auto;\n  background: white;\n  padding: 20px;\n  border-radius: 8px;\n  box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n}",
         js: 'document.getElementById("btn").addEventListener("click", function() {\n  alert("Button clicked!");\n});',
-      });
+      };
+      
+      setGeneratedCode(fallbackCode);
+      
+      // Save even the fallback code to history
+      saveToHistory(idea, fallbackCode.html, fallbackCode.css, fallbackCode.js);
     } finally {
       setIsLoading(false);
     }
@@ -99,6 +113,20 @@ export default function Index() {
   const handleJsChange = useCallback((newJs: string) => {
     setGeneratedCode((prev) => ({ ...prev, js: newJs }));
   }, []);
+  
+  const handleHistoryItemSelect = (item: WebsiteHistoryItem) => {
+    setWebsiteIdea(item.prompt);
+    setGeneratedCode({
+      html: item.code.html,
+      css: item.code.css,
+      js: item.code.js
+    });
+    
+    toast({
+      title: "Loaded from history",
+      description: "You can now edit and update this website",
+    });
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-zinc-900 via-gray-900 to-slate-800 text-white">
@@ -319,7 +347,11 @@ export default function Index() {
               id="website-form"
               className="md:col-span-4 md:sticky md:top-6 self-start h-fit"
             >
-              <WebsiteForm onSubmit={handleSubmit} defaultValue={websiteIdea} />
+              <WebsiteForm 
+                onSubmit={handleSubmit} 
+                defaultValue={websiteIdea} 
+                onHistoryClick={() => setShowHistoryModal(true)} 
+              />
             </div>
 
             <div className="md:col-span-8">
@@ -484,6 +516,13 @@ export default function Index() {
             </div>
           </div>
         </section>
+
+        {/* History Modal */}
+        <HistoryModal
+          open={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          onSelectItem={handleHistoryItemSelect}
+        />
 
         <footer className="mt-16 border-t border-gray-800 pt-10 pb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
