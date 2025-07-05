@@ -480,11 +480,10 @@ export default function Index() {
           <div className="grid md:grid-cols-4 gap-6 text-center">
             <div className="bg-slate-900 rounded-xl shadow-lg p-6 hover:-translate-y-1 transition duration-300 border border-slate-700">
               <h3 className="text-lg font-bold text-blue-400 mb-2">
-                AI-Powered Generation
+                Previous History
               </h3>
               <p className="text-gray-300 text-sm">
-                Describe your idea in any language and instantly get HTML, CSS,
-                and JS code.
+                  You can view the previously genrated websites using the History option.
               </p>
             </div>
             <div className="bg-slate-900 rounded-xl shadow-lg p-6 hover:-translate-y-1 transition duration-300 border border-slate-700">
