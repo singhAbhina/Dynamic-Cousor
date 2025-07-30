@@ -48,7 +48,8 @@ export default function Index() {
 
     try {
       // Connect to the backend API
-      const response = await fetch("https://gemini-backend-5boq.onrender.com/api/generate", {
+      //https://gemini-backend-5boq.onrender.com/api/generate
+      const response = await fetch("https://dynamic-cursor-backend.onrender.com/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
