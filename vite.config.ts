@@ -11,3 +11,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+
+
+export default defineConfig({
+  build: {
+    outDir: 'dist'  
+  }
+});
